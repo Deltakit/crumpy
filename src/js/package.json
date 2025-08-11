@@ -1,0 +1,12 @@
+{
+  "name": "crumpy",
+  "type": "module",
+  "main": "crumble/main.js",
+  "scripts": {
+    "build": "esbuild --bundle --format=esm --outfile=../crumpy/bundle.js crumble/main.js",
+    "watch": "npm run build -- --watch"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.8"
+  }
+}
