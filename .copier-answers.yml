@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 2025.05.02-33-g6daa488
+_src_path: gh:scientific-python/cookie
+backend: poetry
+email: deltakit@riverlane.com
+full_name: Riverlane
+license: Apache
+org: Deltakit
+project_name: crumpy
+project_short_description: A python library for visualizing Crumble circuits in Jupyter
+url: https://github.com/Deltakit/crumpy
+vcs: true
