@@ -15,49 +15,48 @@
  */
 
 const COLLECTION_CUTOFF = 1000;
-const BAD_TO_STRING_RESULT = new (function(){})().toString();
+const BAD_TO_STRING_RESULT = new (function () {})().toString();
 const RECURSE_LIMIT_DESCRIPTION = "!recursion-limit!";
 const DEFAULT_RECURSION_LIMIT = 10;
 
 function try_describe_atomic(value) {
-    if (value === null) {
-        return "null";
-    }
-    if (value === undefined) {
-        return "undefined";
-    }
-    if (typeof value === "string") {
-        return `"${value}"`;
-    }
-    if (typeof value === "number") {
-        return "" + value;
-    }
-    return undefined;
+  if (value === null) {
+    return "null";
+  }
+  if (value === undefined) {
+    return "undefined";
+  }
+  if (typeof value === "string") {
+    return `"${value}"`;
+  }
+  if (typeof value === "number") {
+    return "" + value;
+  }
+  return undefined;
 }
 function try_describe_collection(value, recursionLimit) {
-    if (recursionLimit === 0) {
-        return RECURSE_LIMIT_DESCRIPTION;
-    }
-    if (value instanceof Map) {
-        return describe_Map(value, recursionLimit);
-    }
-    if (value instanceof Set) {
-        return describe_Set(value, recursionLimit);
-    }
-    if (value[Symbol.iterator] !== undefined) {
-        return describe_Iterable(value, recursionLimit);
-    }
-    return undefined;
+  if (recursionLimit === 0) {
+    return RECURSE_LIMIT_DESCRIPTION;
+  }
+  if (value instanceof Map) {
+    return describe_Map(value, recursionLimit);
+  }
+  if (value instanceof Set) {
+    return describe_Set(value, recursionLimit);
+  }
+  if (value[Symbol.iterator] !== undefined) {
+    return describe_Iterable(value, recursionLimit);
+  }
+  return undefined;
 }
 function describe_fallback(value, recursionLimit) {
-    try {
-        let defaultString = String(value);
-        if (defaultString !== BAD_TO_STRING_RESULT) {
-            return defaultString;
-        }
-    } catch {
+  try {
+    let defaultString = String(value);
+    if (defaultString !== BAD_TO_STRING_RESULT) {
+      return defaultString;
     }
-    return describe_Object(value, recursionLimit);
+  } catch {}
+  return describe_Object(value, recursionLimit);
 }
 
 /**
@@ -68,9 +67,11 @@ function describe_fallback(value, recursionLimit) {
  * @returns {!string}
  */
 function describe(value, recursionLimit = DEFAULT_RECURSION_LIMIT) {
-    return try_describe_atomic(value) ||
-        try_describe_collection(value, recursionLimit) ||
-        describe_fallback(value, recursionLimit);
+  return (
+    try_describe_atomic(value) ||
+    try_describe_collection(value, recursionLimit) ||
+    describe_fallback(value, recursionLimit)
+  );
 }
 
 /**
@@ -79,19 +80,19 @@ function describe(value, recursionLimit = DEFAULT_RECURSION_LIMIT) {
  * @returns {!string}
  */
 function describe_Map(map, limit) {
-    let entries = [];
-    for (let [k, v] of map.entries()) {
-        if (entries.length > COLLECTION_CUTOFF) {
-            entries.push("[...]");
-            break;
-        }
-        //noinspection JSUnusedAssignment
-        let keyDesc = describe(k, limit - 1);
-        //noinspection JSUnusedAssignment
-        let valDesc = describe(v, limit - 1);
-        entries.push(`${keyDesc}: ${valDesc}`);
+  let entries = [];
+  for (let [k, v] of map.entries()) {
+    if (entries.length > COLLECTION_CUTOFF) {
+      entries.push("[...]");
+      break;
     }
-    return `Map{${entries.join(", ")}}`;
+    //noinspection JSUnusedAssignment
+    let keyDesc = describe(k, limit - 1);
+    //noinspection JSUnusedAssignment
+    let valDesc = describe(v, limit - 1);
+    entries.push(`${keyDesc}: ${valDesc}`);
+  }
+  return `Map{${entries.join(", ")}}`;
 }
 
 /**
@@ -100,15 +101,15 @@ function describe_Map(map, limit) {
  * @returns {!string}
  */
 function describe_Set(set, limit) {
-    let entries = [];
-    for (let e of set) {
-        if (entries.length > COLLECTION_CUTOFF) {
-            entries.push("[...]");
-            break;
-        }
-        entries.push(describe(e, limit - 1));
+  let entries = [];
+  for (let e of set) {
+    if (entries.length > COLLECTION_CUTOFF) {
+      entries.push("[...]");
+      break;
     }
-    return `Set{${entries.join(", ")}}`;
+    entries.push(describe(e, limit - 1));
+  }
+  return `Set{${entries.join(", ")}}`;
 }
 
 /**
@@ -117,16 +118,16 @@ function describe_Set(set, limit) {
  * @returns {!string}
  */
 function describe_Iterable(seq, limit) {
-    let entries = [];
-    for (let e of seq) {
-        if (entries.length > COLLECTION_CUTOFF) {
-            entries.push("[...]");
-            break;
-        }
-        entries.push(describe(e, limit - 1));
+  let entries = [];
+  for (let e of seq) {
+    if (entries.length > COLLECTION_CUTOFF) {
+      entries.push("[...]");
+      break;
     }
-    let prefix = Array.isArray(seq) ? "" : seq.constructor.name;
-    return `${prefix}[${entries.join(", ")}]`;
+    entries.push(describe(e, limit - 1));
+  }
+  let prefix = Array.isArray(seq) ? "" : seq.constructor.name;
+  return `${prefix}[${entries.join(", ")}]`;
 }
 
 /**
@@ -135,27 +136,27 @@ function describe_Iterable(seq, limit) {
  * @returns {!string}
  */
 function describe_Object(value, limit) {
-    let entries = [];
-    for (let k in value) {
-        if (!value.hasOwnProperty(k)) {
-            continue;
-        }
-        if (entries.length > COLLECTION_CUTOFF) {
-            entries.push("[...]");
-            break;
-        }
-        let v = value[k];
-        let keyDesc = describe(k, limit - 1);
-        let valDesc = describe(v, limit - 1);
-        entries.push(`${keyDesc}: ${valDesc}`);
+  let entries = [];
+  for (let k in value) {
+    if (!value.hasOwnProperty(k)) {
+      continue;
     }
+    if (entries.length > COLLECTION_CUTOFF) {
+      entries.push("[...]");
+      break;
+    }
+    let v = value[k];
+    let keyDesc = describe(k, limit - 1);
+    let valDesc = describe(v, limit - 1);
+    entries.push(`${keyDesc}: ${valDesc}`);
+  }
 
-    if (value.constructor === undefined) {
-        return `[an unknown non-primitive value with no constructor]`;
-    }
-    let typeName = value.constructor.name;
-    let prefix = typeName === {}.constructor.name ? "" : `(Type: ${typeName})`;
-    return `${prefix}{${entries.join(", ")}}`;
+  if (value.constructor === undefined) {
+    return `[an unknown non-primitive value with no constructor]`;
+  }
+  let typeName = value.constructor.name;
+  let prefix = typeName === {}.constructor.name ? "" : `(Type: ${typeName})`;
+  return `${prefix}{${entries.join(", ")}}`;
 }
 
-export {describe}
+export { describe };

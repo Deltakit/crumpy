@@ -1,11 +1,15 @@
-import {test, assertThat} from "../test/test_util.js"
-import {Circuit, processTargetsTextIntoTargets, splitUncombinedTargets} from "./circuit.js"
-import {Operation} from "./operation.js";
-import {GATE_MAP} from "../gates/gateset.js";
-import {make_mpp_gate} from '../gates/gateset_mpp.js';
+import { test, assertThat } from "../test/test_util.js";
+import {
+  Circuit,
+  processTargetsTextIntoTargets,
+  splitUncombinedTargets,
+} from "./circuit.js";
+import { Operation } from "./operation.js";
+import { GATE_MAP } from "../gates/gateset.js";
+import { make_mpp_gate } from "../gates/gateset_mpp.js";
 
 test("circuit.fromStimCircuit", () => {
-    let c1 = Circuit.fromStimCircuit(`
+  let c1 = Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 2) 0
         QUBIT_COORDS(3, 4) 1
         QUBIT_COORDS(5, 6) 2
@@ -14,9 +18,9 @@ test("circuit.fromStimCircuit", () => {
         TICK
         CX 2 0
     `);
-    assertThat(c1.qubitCoordData).isEqualTo(new Float64Array([1, 2, 3, 4, 5, 6]));
+  assertThat(c1.qubitCoordData).isEqualTo(new Float64Array([1, 2, 3, 4, 5, 6]));
 
-    let c2 = Circuit.fromStimCircuit(`
+  let c2 = Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 1) 1
         QUBIT_COORDS(2, 0) 2
@@ -29,18 +33,79 @@ test("circuit.fromStimCircuit", () => {
         S[test] 1 2
         CX 5 6
     `);
-    assertThat(c2.qubitCoordData).isEqualTo(new Float64Array([0, 0, 0, 1, 2, 0, 2, 4, 2, 3, 3, 5, 3, 6]));
-    assertThat(c2.layers.length).isEqualTo(1);
-    assertThat(c2.layers[0].id_ops).isEqualTo(new Map([
-        [0, new Operation(GATE_MAP.get('H'), '', new Float32Array(), new Uint32Array([0]))],
-        [1, new Operation(GATE_MAP.get('S'), 'test', new Float32Array(), new Uint32Array([1]))],
-        [2, new Operation(GATE_MAP.get('S'), 'test', new Float32Array(), new Uint32Array([2]))],
-        [3, new Operation(GATE_MAP.get('S'), '', new Float32Array(), new Uint32Array([3]))],
-        [4, new Operation(GATE_MAP.get('S'), '', new Float32Array(), new Uint32Array([4]))],
-        [5, new Operation(GATE_MAP.get('CX'), '', new Float32Array(), new Uint32Array([5, 6]))],
-        [6, new Operation(GATE_MAP.get('CX'), '', new Float32Array(), new Uint32Array([5, 6]))],
-    ]));
-    assertThat(c2.toStimCircuit()).isEqualTo(`
+  assertThat(c2.qubitCoordData).isEqualTo(
+    new Float64Array([0, 0, 0, 1, 2, 0, 2, 4, 2, 3, 3, 5, 3, 6]),
+  );
+  assertThat(c2.layers.length).isEqualTo(1);
+  assertThat(c2.layers[0].id_ops).isEqualTo(
+    new Map([
+      [
+        0,
+        new Operation(
+          GATE_MAP.get("H"),
+          "",
+          new Float32Array(),
+          new Uint32Array([0]),
+        ),
+      ],
+      [
+        1,
+        new Operation(
+          GATE_MAP.get("S"),
+          "test",
+          new Float32Array(),
+          new Uint32Array([1]),
+        ),
+      ],
+      [
+        2,
+        new Operation(
+          GATE_MAP.get("S"),
+          "test",
+          new Float32Array(),
+          new Uint32Array([2]),
+        ),
+      ],
+      [
+        3,
+        new Operation(
+          GATE_MAP.get("S"),
+          "",
+          new Float32Array(),
+          new Uint32Array([3]),
+        ),
+      ],
+      [
+        4,
+        new Operation(
+          GATE_MAP.get("S"),
+          "",
+          new Float32Array(),
+          new Uint32Array([4]),
+        ),
+      ],
+      [
+        5,
+        new Operation(
+          GATE_MAP.get("CX"),
+          "",
+          new Float32Array(),
+          new Uint32Array([5, 6]),
+        ),
+      ],
+      [
+        6,
+        new Operation(
+          GATE_MAP.get("CX"),
+          "",
+          new Float32Array(),
+          new Uint32Array([5, 6]),
+        ),
+      ],
+    ]),
+  );
+  assertThat(c2.toStimCircuit()).isEqualTo(
+    `
 QUBIT_COORDS(0, 0) 0
 QUBIT_COORDS(0, 1) 1
 QUBIT_COORDS(2, 0) 2
@@ -52,28 +117,32 @@ CX 5 6
 H 0
 S 4 3
 S[test] 1 2
-    `.trim());
+    `.trim(),
+  );
 });
 
 test("circuit.fromStimCircuit_strip_measurement_noise", () => {
-    let c1 = Circuit.fromStimCircuit(`
+  let c1 = Circuit.fromStimCircuit(`
         M(0.1) 0
     `);
-    assertThat(c1.toStimCircuit()).isEqualTo(`
+  assertThat(c1.toStimCircuit()).isEqualTo(
+    `
 QUBIT_COORDS(0, 0) 0
 M 0
-    `.trim());
+    `.trim(),
+  );
 });
 
 test("circuit.fromStimCircuit_detector", () => {
-    let c = Circuit.fromStimCircuit(`
+  let c = Circuit.fromStimCircuit(`
         QUBIT_COORDS(2, 3) 0
         R 0
         M 0
         R 0
         DETECTOR rec[-1]
     `);
-    assertThat(c.toStimCircuit()).isEqualTo(`
+  assertThat(c.toStimCircuit()).isEqualTo(
+    `
 QUBIT_COORDS(2, 3) 0
 R 0
 TICK
@@ -81,17 +150,19 @@ M 0
 DETECTOR(2, 3, 0) rec[-1]
 TICK
 R 0
-    `.trim());
-})
+    `.trim(),
+  );
+});
 
 test("circuit.fromStimCircuit_observable", () => {
-    let c = Circuit.fromStimCircuit(`
+  let c = Circuit.fromStimCircuit(`
         R 0
         M 0
         OBSERVABLE_INCLUDE(3) rec[-1]
         R 0
     `);
-    assertThat(c.toStimCircuit()).isEqualTo(`
+  assertThat(c.toStimCircuit()).isEqualTo(
+    `
 QUBIT_COORDS(0, 0) 0
 R 0
 TICK
@@ -99,263 +170,428 @@ M 0
 OBSERVABLE_INCLUDE(3) rec[-1]
 TICK
 R 0
-    `.trim());
-})
+    `.trim(),
+  );
+});
 
 test("circuit.fromStimCircuit_mpp", () => {
-    let c1 = Circuit.fromStimCircuit(`
+  let c1 = Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 2) 0
         QUBIT_COORDS(3, 4) 1
         QUBIT_COORDS(5, 6) 2
         MPP X0*Z1*Y2 X2*Y1
     `);
-    assertThat(c1.qubitCoordData).isEqualTo(
-        new Float64Array([1, 2, 3, 4, 5, 6]));
-    assertThat(c1.layers.length).isEqualTo(2);
-    let op1 = new Operation(make_mpp_gate("XZY"), '', new Float32Array([]), new Uint32Array([0, 1, 2]));
-    assertThat(c1.layers[0].id_ops).isEqualTo(new Map([
-        [0, op1],
-        [1, op1],
-        [2, op1],
-    ]));
-    let op2 = new Operation(make_mpp_gate("XY"), '', new Float32Array([]), new Uint32Array([2, 1]));
-    assertThat(c1.layers[1].id_ops).isEqualTo(new Map([
-        [1, op2],
-        [2, op2],
-    ]));
-    assertThat(c1.toStimCircuit()).isEqualTo(`
+  assertThat(c1.qubitCoordData).isEqualTo(new Float64Array([1, 2, 3, 4, 5, 6]));
+  assertThat(c1.layers.length).isEqualTo(2);
+  let op1 = new Operation(
+    make_mpp_gate("XZY"),
+    "",
+    new Float32Array([]),
+    new Uint32Array([0, 1, 2]),
+  );
+  assertThat(c1.layers[0].id_ops).isEqualTo(
+    new Map([
+      [0, op1],
+      [1, op1],
+      [2, op1],
+    ]),
+  );
+  let op2 = new Operation(
+    make_mpp_gate("XY"),
+    "",
+    new Float32Array([]),
+    new Uint32Array([2, 1]),
+  );
+  assertThat(c1.layers[1].id_ops).isEqualTo(
+    new Map([
+      [1, op2],
+      [2, op2],
+    ]),
+  );
+  assertThat(c1.toStimCircuit()).isEqualTo(
+    `
 QUBIT_COORDS(1, 2) 0
 QUBIT_COORDS(3, 4) 1
 QUBIT_COORDS(5, 6) 2
 MPP X0*Z1*Y2
 TICK
 MPP X2*Y1
-    `.trim());
+    `.trim(),
+  );
 });
 
-test('circuit.coordToQubitMap', () => {
-    let c = Circuit.fromStimCircuit(`
+test("circuit.coordToQubitMap", () => {
+  let c = Circuit.fromStimCircuit(`
         QUBIT_COORDS(5, 6) 1
         QUBIT_COORDS(10, 7) 2
         QUBIT_COORDS(20, 17) 0
     `);
-    assertThat(c.qubitCoordData).isEqualTo(new Float64Array([20, 17, 5, 6, 10, 7]));
-    assertThat(c.coordToQubitMap()).isEqualTo(new Map([
-        ['5,6', 1],
-        ['10,7', 2],
-        ['20,17', 0],
-    ]));
+  assertThat(c.qubitCoordData).isEqualTo(
+    new Float64Array([20, 17, 5, 6, 10, 7]),
+  );
+  assertThat(c.coordToQubitMap()).isEqualTo(
+    new Map([
+      ["5,6", 1],
+      ["10,7", 2],
+      ["20,17", 0],
+    ]),
+  );
 });
 
-test('circuit.processTargetsTextIntoTargets', () => {
-    assertThat(processTargetsTextIntoTargets('')).isEqualTo([]);
-    assertThat(processTargetsTextIntoTargets(' X0*X1')).isEqualTo(['X0', '*', 'X1']);
-    assertThat(processTargetsTextIntoTargets(' 0 1 2')).isEqualTo(['0', '1', '2']);
-    assertThat(processTargetsTextIntoTargets(' X0*X1*Z3 Y1 Y2*Y4')).isEqualTo(['X0', '*', 'X1', '*', 'Z3', 'Y1', 'Y2', '*', 'Y4']);
+test("circuit.processTargetsTextIntoTargets", () => {
+  assertThat(processTargetsTextIntoTargets("")).isEqualTo([]);
+  assertThat(processTargetsTextIntoTargets(" X0*X1")).isEqualTo([
+    "X0",
+    "*",
+    "X1",
+  ]);
+  assertThat(processTargetsTextIntoTargets(" 0 1 2")).isEqualTo([
+    "0",
+    "1",
+    "2",
+  ]);
+  assertThat(processTargetsTextIntoTargets(" X0*X1*Z3 Y1 Y2*Y4")).isEqualTo([
+    "X0",
+    "*",
+    "X1",
+    "*",
+    "Z3",
+    "Y1",
+    "Y2",
+    "*",
+    "Y4",
+  ]);
 });
 
-test('circuit.splitUncombinedTargets', () => {
-    assertThat(splitUncombinedTargets([])).isEqualTo([]);
-    assertThat(splitUncombinedTargets(['X1'])).isEqualTo([['X1']]);
-    assertThat(splitUncombinedTargets(['X1', 'X2'])).isEqualTo([['X1'], ['X2']]);
-    assertThat(splitUncombinedTargets(['X1', '*', 'X2'])).isEqualTo([['X1', 'X2']]);
-    assertThat(splitUncombinedTargets(['X1', '*', 'X2', 'Y1', '*', 'Y2', '*', 'Y3', 'Z1', 'Z2', '*', 'Z3'])).isEqualTo([['X1', 'X2'], ['Y1', 'Y2', 'Y3'], ['Z1'], ['Z2', 'Z3']]);
-    assertThat(() => splitUncombinedTargets(['X1', '*', '*', 'X2'])).throwsAnExceptionThat().matches(/Adjacent combiners/);
-    assertThat(() => splitUncombinedTargets(['X1', '*'])).throwsAnExceptionThat().matches(/Dangling combiner/);
-    assertThat(() => splitUncombinedTargets(['*', 'X1'])).throwsAnExceptionThat().matches(/Leading combiner/);
+test("circuit.splitUncombinedTargets", () => {
+  assertThat(splitUncombinedTargets([])).isEqualTo([]);
+  assertThat(splitUncombinedTargets(["X1"])).isEqualTo([["X1"]]);
+  assertThat(splitUncombinedTargets(["X1", "X2"])).isEqualTo([["X1"], ["X2"]]);
+  assertThat(splitUncombinedTargets(["X1", "*", "X2"])).isEqualTo([
+    ["X1", "X2"],
+  ]);
+  assertThat(
+    splitUncombinedTargets([
+      "X1",
+      "*",
+      "X2",
+      "Y1",
+      "*",
+      "Y2",
+      "*",
+      "Y3",
+      "Z1",
+      "Z2",
+      "*",
+      "Z3",
+    ]),
+  ).isEqualTo([["X1", "X2"], ["Y1", "Y2", "Y3"], ["Z1"], ["Z2", "Z3"]]);
+  assertThat(() => splitUncombinedTargets(["X1", "*", "*", "X2"]))
+    .throwsAnExceptionThat()
+    .matches(/Adjacent combiners/);
+  assertThat(() => splitUncombinedTargets(["X1", "*"]))
+    .throwsAnExceptionThat()
+    .matches(/Dangling combiner/);
+  assertThat(() => splitUncombinedTargets(["*", "X1"]))
+    .throwsAnExceptionThat()
+    .matches(/Leading combiner/);
 });
 
-test('circuit.withCoordsIncluded', () => {
-    let c = Circuit.fromStimCircuit(`
+test("circuit.withCoordsIncluded", () => {
+  let c = Circuit.fromStimCircuit(`
         QUBIT_COORDS(10, 7) 1
         QUBIT_COORDS(5, 6) 0
     `);
-    assertThat(c.qubitCoordData).isEqualTo(new Float64Array([5, 6, 10, 7]));
-    let c2 = c.withCoordsIncluded([[5, 6], [2, 4], [2, 4]])
-    assertThat(c2.qubitCoordData).isEqualTo(new Float64Array([5, 6, 10, 7, 2, 4]));
+  assertThat(c.qubitCoordData).isEqualTo(new Float64Array([5, 6, 10, 7]));
+  let c2 = c.withCoordsIncluded([
+    [5, 6],
+    [2, 4],
+    [2, 4],
+  ]);
+  assertThat(c2.qubitCoordData).isEqualTo(
+    new Float64Array([5, 6, 10, 7, 2, 4]),
+  );
 });
 
 test("circuit.isEqualTo", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         H 0
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         H 0
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         H 0
-    `)).isNotEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isNotEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         X 0
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         H 0
-    `)).isNotEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isNotEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 0) 0
         H 0
-    `));
+    `),
+  );
 });
 
 test("circuit.copy", () => {
-    let c = Circuit.fromStimCircuit(`
+  let c = Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(2, 3) 1
         H 0
         CNOT 0 1
         S 1
     `);
-    let c2 = c.copy();
-    assertThat(c !== c2).isEqualTo(true);
-    assertThat(c).isEqualTo(c2);
+  let c2 = c.copy();
+  assertThat(c !== c2).isEqualTo(true);
+  assertThat(c).isEqualTo(c2);
 });
 
 test("circuit.afterRectification", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 1) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 1) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 2) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 1) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 0.5) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0, 1) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(2, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0.5, 0) 0
         QUBIT_COORDS(1, 0.5) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0.5) 0
         QUBIT_COORDS(0.5, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0.5, 0.5) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(1, 2) 0
         QUBIT_COORDS(2, 1) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0.5, 0.5) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0.5, 0.5) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0.5, 0.5) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.25, 0.25) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 1) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 1) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0.5, 0.5) 0
         QUBIT_COORDS(1, 0) 1
         X 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(10, 20) 0
         QUBIT_COORDS(12, 20) 1
         QUBIT_COORDS(12, 21) 2
@@ -364,7 +600,10 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(2, 0) 1
         QUBIT_COORDS(2, 1) 2
@@ -373,9 +612,12 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(-2, 0) 1
         QUBIT_COORDS(-2, -1) 2
@@ -384,7 +626,10 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(2, 1) 0
         QUBIT_COORDS(0, 1) 1
         QUBIT_COORDS(0, 0) 2
@@ -393,9 +638,12 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 4) 0
         QUBIT_COORDS(2, 0) 1
         QUBIT_COORDS(0, 0) 2
@@ -404,7 +652,10 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 2) 0
         QUBIT_COORDS(1, 0) 1
         QUBIT_COORDS(0, 0) 2
@@ -413,9 +664,12 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0.5) 0
         QUBIT_COORDS(0.25, 0) 1
         QUBIT_COORDS(0, 0) 2
@@ -424,7 +678,10 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 2) 0
         QUBIT_COORDS(1, 0) 1
         QUBIT_COORDS(0, 0) 2
@@ -433,9 +690,12 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         QUBIT_COORDS(1, 1) 2
@@ -444,7 +704,10 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `).afterRectification()).isEqualTo(Circuit.fromStimCircuit(`
+    `,
+    ).afterRectification(),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(0.5, 0.5) 1
         QUBIT_COORDS(1, 1) 2
@@ -453,11 +716,12 @@ test("circuit.afterRectification", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 });
 
 test("circuit.rotated45", () => {
-    let circuit = Circuit.fromStimCircuit(`
+  let circuit = Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(2, 0) 1
         QUBIT_COORDS(2, 1) 2
@@ -467,16 +731,19 @@ test("circuit.rotated45", () => {
         Y 2
         Z 3
     `);
-    let c45 = circuit.rotated45().afterRectification();
-    let c90 = c45.rotated45().afterRectification();
-    let c180 = c90.rotated45().rotated45().afterRectification();
+  let c45 = circuit.rotated45().afterRectification();
+  let c90 = c45.rotated45().afterRectification();
+  let c180 = c90.rotated45().rotated45().afterRectification();
 
-    assertThat(circuit.rotated45().rotated45().rotated45().rotated45()).isEqualTo(
-        circuit.afterCoordTransform((x, y) => [-4*x, -4*y]));
-    assertThat(c180).isEqualTo(
-        circuit.afterCoordTransform((x, y) => [2-x, 1-y]));
+  assertThat(circuit.rotated45().rotated45().rotated45().rotated45()).isEqualTo(
+    circuit.afterCoordTransform((x, y) => [-4 * x, -4 * y]),
+  );
+  assertThat(c180).isEqualTo(
+    circuit.afterCoordTransform((x, y) => [2 - x, 1 - y]),
+  );
 
-    assertThat(c90).isEqualTo(Circuit.fromStimCircuit(`
+  assertThat(c90).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 0) 0
         QUBIT_COORDS(1, 2) 1
         QUBIT_COORDS(0, 2) 2
@@ -485,9 +752,11 @@ test("circuit.rotated45", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 
-    assertThat(c45).isEqualTo(Circuit.fromStimCircuit(`
+  assertThat(c45).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 0) 0
         QUBIT_COORDS(2, 1) 1
         QUBIT_COORDS(1.5, 1.5) 2
@@ -496,74 +765,100 @@ test("circuit.rotated45", () => {
         X 1
         Y 2
         Z 3
-    `));
+    `),
+  );
 });
 
 test("circuit.fromStimCircuit.automaticTicks", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         H 0
         CX 0 1
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         H 0
         TICK
         CX 0 1
-    `));
+    `),
+  );
 });
 
 test("circuit.inferAndConvertCoordinates", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         H 0 1 2 3
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         QUBIT_COORDS(2, 0) 2
         QUBIT_COORDS(3, 0) 3
         H 0 1 2 3
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         H 0 3 2 1
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         QUBIT_COORDS(2, 0) 2
         QUBIT_COORDS(3, 0) 3
         H 0 3 2 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(2) 0
         QUBIT_COORDS(3) 1
         QUBIT_COORDS(5) 2
         QUBIT_COORDS(7) 3
         H 0 3 2 1
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(2, 0) 0
         QUBIT_COORDS(3, 0) 1
         QUBIT_COORDS(5, 0) 2
         QUBIT_COORDS(7, 0) 3
         H 0 3 2 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(2, 1, 9, 9, 9) 0
         QUBIT_COORDS(3, 1) 1
         QUBIT_COORDS(5, 1, 9) 2
         QUBIT_COORDS(7, 1, 9, 9) 3
         H 0 3 2 1
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(2, 1) 0
         QUBIT_COORDS(3, 1) 1
         QUBIT_COORDS(5, 1) 2
         QUBIT_COORDS(7, 1) 3
         H 0 3 2 1
-    `));
+    `),
+  );
 });
 
 test("circuit.parse_mpp", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         MPP Z0*Z1*Z2 Z3*Z4*Z6
-    `).toString()).isEqualTo(`
+    `,
+    ).toString(),
+  ).isEqualTo(
+    `
 QUBIT_COORDS(0, 0) 0
 QUBIT_COORDS(1, 0) 1
 QUBIT_COORDS(2, 0) 2
@@ -571,11 +866,17 @@ QUBIT_COORDS(3, 0) 3
 QUBIT_COORDS(4, 0) 4
 QUBIT_COORDS(6, 0) 5
 MPP Z0*Z1*Z2 Z3*Z4*Z5
-    `.trim())
+    `.trim(),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(
+      `
         MPP Z0*Z1*Z2 Z3*Z4*Z5*X6
-    `).toString()).isEqualTo(`
+    `,
+    ).toString(),
+  ).isEqualTo(
+    `
 QUBIT_COORDS(0, 0) 0
 QUBIT_COORDS(1, 0) 1
 QUBIT_COORDS(2, 0) 2
@@ -584,11 +885,12 @@ QUBIT_COORDS(4, 0) 4
 QUBIT_COORDS(5, 0) 5
 QUBIT_COORDS(6, 0) 6
 MPP Z0*Z1*Z2 Z3*Z4*Z5*X6
-    `.trim())
+    `.trim(),
+  );
 });
 
 test("circuit.fromStimCircuit_manygates", () => {
-    let c = Circuit.fromStimCircuit(`
+  let c = Circuit.fromStimCircuit(`
         QUBIT_COORDS(1, 2, 3) 0
 
         # Pauli gates
@@ -706,27 +1008,37 @@ test("circuit.fromStimCircuit_manygates", () => {
         CY sweep[0] 1
         CZ 2 rec[-1]
     `);
-    assertThat(c).isNotEqualTo(undefined);
+  assertThat(c).isNotEqualTo(undefined);
 
-    let c2 = Circuit.fromStimCircuit(`Q(1,2,3)0;I_0;X_1;Y_2;Z_3;TICK;C_XYZ_0;C_ZYX_1;H_XY_2;H_3;H_YZ_4;SQRT_X_0;SQRT_X_DAG_1;SQRT_Y_2;SQRT_Y_DAG_3;S_4;S_DAG_5;TICK;CXSWAP_0_1;ISWAP_2_3;ISWAP_DAG_4_5;SWAP_6_7;SWAPCX_8_9;CZSWAP_10_11;SQRT_XX_0_1;SQRT_XX_DAG_2_3;SQRT_YY_4_5;SQRT_YY_DAG_6_7;SQRT_ZZ_8_9;SQRT_ZZ_DAG_10_11;XCX_0_1;XCY_2_3;XCZ_4_5;YCX_6_7;YCY_8_9;YCZ_10_11;CX_12_13;CY_14_15;CZ_16_17;TICK;E(0.01)X1_Y2_Z3;ELSE_CORRELATED_ERROR(0.02)X4_Y7_Z6;DEPOLARIZE1(0.02)0;DEPOLARIZE2(0.03)1_2;PAULI_CHANNEL_1(0.01,0.02,0.03)3;PAULI_CHANNEL_2(0.001,0.002,0.003,0.004,0.005,0.006,0.007,0.008,0.009,0.01,0.011,0.012,0.013,0.014,0.015)4_5;X_ERROR(0.01)0;Y_ERROR(0.02)1;Z_ERROR(0.03)2;HERALDED_ERASE(0.04)3;HERALDED_PAULI_CHANNEL_1(0.01,0.02,0.03,0.04)6;TICK;MPP_X0*Y1*Z2_Z0*Z1;SPP_X0*Y1*Z2_X3;SPP_DAG_X0*Y1*Z2_X2;TICK;MRX_0;MRY_1;MR_2;MX_3;MY_4;M_5_6;RX_7;RY_8;R_9;TICK;MXX_0_1_2_3;MYY_4_5;MZZ_6_7;TICK;REPEAT_3_{;H_0;CX_0_1;S_1;TICK;};TICK;MR_0;X_ERROR(0.1)0;MR(0.01)0;SHIFT_COORDS(1,2,3);DETECTOR(1,2,3)rec[-1];OBSERVABLE_INCLUDE(0)rec[-1];MPAD_0_1_0;TICK;MRX_!0;MY_!1;MZZ_!2_3;MYY_!4_!5;MPP_X6*!Y7*Z8;TICK;CX_rec[-1]_0;CY_sweep[0]_1;CZ_2_rec[-1]`);
-    assertThat(c2).isNotEqualTo(undefined);
-    assertThat(c).isEqualTo(c2);
+  let c2 = Circuit.fromStimCircuit(
+    `Q(1,2,3)0;I_0;X_1;Y_2;Z_3;TICK;C_XYZ_0;C_ZYX_1;H_XY_2;H_3;H_YZ_4;SQRT_X_0;SQRT_X_DAG_1;SQRT_Y_2;SQRT_Y_DAG_3;S_4;S_DAG_5;TICK;CXSWAP_0_1;ISWAP_2_3;ISWAP_DAG_4_5;SWAP_6_7;SWAPCX_8_9;CZSWAP_10_11;SQRT_XX_0_1;SQRT_XX_DAG_2_3;SQRT_YY_4_5;SQRT_YY_DAG_6_7;SQRT_ZZ_8_9;SQRT_ZZ_DAG_10_11;XCX_0_1;XCY_2_3;XCZ_4_5;YCX_6_7;YCY_8_9;YCZ_10_11;CX_12_13;CY_14_15;CZ_16_17;TICK;E(0.01)X1_Y2_Z3;ELSE_CORRELATED_ERROR(0.02)X4_Y7_Z6;DEPOLARIZE1(0.02)0;DEPOLARIZE2(0.03)1_2;PAULI_CHANNEL_1(0.01,0.02,0.03)3;PAULI_CHANNEL_2(0.001,0.002,0.003,0.004,0.005,0.006,0.007,0.008,0.009,0.01,0.011,0.012,0.013,0.014,0.015)4_5;X_ERROR(0.01)0;Y_ERROR(0.02)1;Z_ERROR(0.03)2;HERALDED_ERASE(0.04)3;HERALDED_PAULI_CHANNEL_1(0.01,0.02,0.03,0.04)6;TICK;MPP_X0*Y1*Z2_Z0*Z1;SPP_X0*Y1*Z2_X3;SPP_DAG_X0*Y1*Z2_X2;TICK;MRX_0;MRY_1;MR_2;MX_3;MY_4;M_5_6;RX_7;RY_8;R_9;TICK;MXX_0_1_2_3;MYY_4_5;MZZ_6_7;TICK;REPEAT_3_{;H_0;CX_0_1;S_1;TICK;};TICK;MR_0;X_ERROR(0.1)0;MR(0.01)0;SHIFT_COORDS(1,2,3);DETECTOR(1,2,3)rec[-1];OBSERVABLE_INCLUDE(0)rec[-1];MPAD_0_1_0;TICK;MRX_!0;MY_!1;MZZ_!2_3;MYY_!4_!5;MPP_X6*!Y7*Z8;TICK;CX_rec[-1]_0;CY_sweep[0]_1;CZ_2_rec[-1]`,
+  );
+  assertThat(c2).isNotEqualTo(undefined);
+  assertThat(c).isEqualTo(c2);
 });
 
 test("circuit.fromStimCircuit_cx_ordering", () => {
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         CX 0 1
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         CX 0 1
-    `));
+    `),
+  );
 
-    assertThat(Circuit.fromStimCircuit(`
+  assertThat(
+    Circuit.fromStimCircuit(`
         XCZ 1 0
-    `)).isEqualTo(Circuit.fromStimCircuit(`
+    `),
+  ).isEqualTo(
+    Circuit.fromStimCircuit(`
         QUBIT_COORDS(0, 0) 0
         QUBIT_COORDS(1, 0) 1
         CX 0 1
-    `));
+    `),
+  );
 });
