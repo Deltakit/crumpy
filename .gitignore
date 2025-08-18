@@ -186,3 +186,7 @@ Thumbs.db
 # Common editor files
 *~
 *.swp
+
+# js
+src/js/node_modules
+src/crumpy/bundle.js
