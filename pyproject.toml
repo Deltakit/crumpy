@@ -54,6 +54,8 @@ docs = [
 ]
 [tool.poetry]
 version = "0.0.0"
+packages = [{ include = "crumpy", from = "src" }]
+include = [{ path = "src/crumpy/bundle.js", format = ["sdist", "wheel"] }]
 
 [tool.poetry.requires-plugins]
 poetry-dynamic-versioning = { version = ">=1.0.0", extras = ["plugin"] }
