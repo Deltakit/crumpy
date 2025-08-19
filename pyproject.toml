@@ -28,7 +28,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+    "anywidget>=0.9.18",
+    "traitlets>=5.14.3",
+]
 
 [project.urls]
 Homepage = "https://github.com/Deltakit/crumpy"
