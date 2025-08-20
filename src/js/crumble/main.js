@@ -6,38 +6,7 @@ import { initUrlCircuitSync } from "./editor/sync_url_to_state.js";
 const CANVAS_W = 600;
 const CANVAS_H = 300;
 
-function createUIElements(el) {
-  let defaultText = document.createElement("textarea");
-  defaultText.id = "txtDefaultCircuit";
-  defaultText.setAttribute("style", "display: none");
-  defaultText.value = "[[[DEFAULT_CIRCUIT_CONTENT_LITERAL]]]";
-  el.appendChild(defaultText);
-
-  let importExportDiv = document.createElement("div");
-  importExportDiv.id = "divImportExport";
-  importExportDiv.setAttribute("style", "display: none");
-  el.appendChild(importExportDiv);
-
-  let txtStimCircuit = document.createElement("textarea");
-  txtStimCircuit.id = "txtStimCircuit";
-  txtStimCircuit.setAttribute(
-    "style",
-    "width: 95vw; height: 300px; background-color: #FFFFB0",
-  );
-  importExportDiv.appendChild(txtStimCircuit);
-
-  let btnExport = document.createElement("button");
-  btnExport.id = "btnExport";
-  btnExport.setAttribute("style", "background-color: red");
-  btnExport.textContent = "↑ Export to Stim Circuit ↑";
-  importExportDiv.appendChild(btnExport);
-
-  let btnImport = document.createElement("button");
-  btnImport.id = "btnImport";
-  btnImport.setAttribute("style", "background-color: red");
-  btnImport.textContent = "↓ Import from Stim Circuit ↓";
-  importExportDiv.appendChild(btnImport);
-
+function initCanvas(el) {
   let canvas = document.createElement("canvas");
 
   canvas.id = "cvn";
@@ -50,52 +19,31 @@ function createUIElements(el) {
   canvas.height = CANVAS_H;
   el.appendChild(canvas);
 
-  return {
-    defaultText,
-    importExportDiv,
-    txtStimCircuit,
-    btnExport,
-    btnImport,
-    canvas,
-  };
+  return canvas;
 }
 
 function render({ model, el }) {
   const getStim = () => model.get("stim");
 
-  const { txtStimCircuit, btnExport, btnImport, canvas } = createUIElements(el);
+  const canvas = initCanvas(el);
 
   let editorState = /** @type {!EditorState} */ new EditorState(canvas);
 
-  function exportCurrentState() {
-    let validStimCircuit = editorState
+  const exportCurrentState = () =>
+    editorState
       .copyOfCurCircuit()
       .toStimCircuit()
       .replaceAll("\nPOLYGON", "\n#!pragma POLYGON")
       .replaceAll("\nERR", "\n#!pragma ERR")
       .replaceAll("\nMARK", "\n#!pragma MARK");
-    let txt = txtStimCircuit;
-    txt.value = validStimCircuit + "\n";
-    txt.focus();
-    txt.select();
-  }
-  function commitInputAsCircuit() {
-    let text = txtStimCircuit.value;
-    let circuit = Circuit.fromStimCircuit(text);
+  function commitStimCircuit(stim_str) {
+    let circuit = Circuit.fromStimCircuit(stim_str);
     editorState.commit(circuit);
   }
 
-  btnExport.addEventListener("click", (_ev) => {
-    exportCurrentState();
-  });
-  btnImport.addEventListener("click", (_ev) => {
-    commitInputAsCircuit();
-  });
-
-  // Changes to circuit on the Python/notebook side update the JS side
+  // Changes to circuit on the Python/notebook side update the JS
   model.on("change:stim", () => {
-    txtStimCircuit.value = getStim();
-    commitInputAsCircuit();
+    commitStimCircuit(getStim());
   });
 
   // Listeners on editor state that trigger redraws
@@ -108,8 +56,7 @@ function render({ model, el }) {
     }),
   );
 
-  // Populate text area with initial stim and commit
-  txtStimCircuit.value = getStim();
-  commitInputAsCircuit();
+  // Commit initial stim
+  commitStimCircuit(getStim());
 }
 export default { render };
