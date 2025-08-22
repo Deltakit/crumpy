@@ -1,7 +1,7 @@
 import { Circuit } from "./circuit/circuit.js";
 import { draw } from "./draw/main_draw.js";
 import { EditorState } from "./editor/editor_state.js";
-import { initUrlCircuitSync } from "./editor/sync_url_to_state.js";
+import { setIndentCircuitLines, setCurveConnectors } from "./draw/config.js";
 
 const CANVAS_W = 600;
 const CANVAS_H = 300;
@@ -12,7 +12,7 @@ function initCanvas(el) {
   canvas.id = "cvn";
   canvas.setAttribute(
     "style",
-    `width: ${CANVAS_W}px; height: ${CANVAS_H}px; border: 1px solid black; margin: 0; padding: 0;`,
+    `border: 1px solid black; margin: 0; padding: 0;`,
   );
   canvas.tabIndex = 0;
   canvas.width = CANVAS_W;
@@ -23,7 +23,11 @@ function initCanvas(el) {
 }
 
 function render({ model, el }) {
-  const getStim = () => model.get("stim");
+  const traitlets = {
+    getStim: () => model.get("stim"),
+    getIndentCircuitLines: () => model.get("indentCircuitLines"),
+    getCurveConnectors: () => model.get("curveConnectors"),
+  };
 
   const canvas = initCanvas(el);
 
@@ -42,8 +46,14 @@ function render({ model, el }) {
   }
 
   // Changes to circuit on the Python/notebook side update the JS
-  model.on("change:stim", () => {
-    commitStimCircuit(getStim());
+  model.on("change:stim", () => commitStimCircuit(traitlets.getStim()));
+  model.on("change:indentCircuitLines", () => {
+    setIndentCircuitLines(traitlets.getIndentCircuitLines());
+    editorState.force_redraw();
+  });
+  model.on("change:curveConnectors", () => {
+    setCurveConnectors(traitlets.getCurveConnectors());
+    editorState.force_redraw();
   });
 
   // Listeners on editor state that trigger redraws
@@ -56,7 +66,9 @@ function render({ model, el }) {
     }),
   );
 
-  // Commit initial stim
-  commitStimCircuit(getStim());
+  // Configure initial settings and stim
+  setIndentCircuitLines(traitlets.getIndentCircuitLines());
+  setCurveConnectors(traitlets.getCurveConnectors());
+  commitStimCircuit(traitlets.getStim());
 }
 export default { render };

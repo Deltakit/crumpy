@@ -1,4 +1,4 @@
-import { pitch, rad } from "../draw/config.js";
+import { curveConnectors, pitch, rad } from "../draw/config.js";
 
 /**
  * @param {!CanvasRenderingContext2D} ctx
@@ -215,9 +215,10 @@ function stroke_connector_to(ctx, x1, y1, x2, y2) {
 
   ctx.beginPath();
   ctx.moveTo(x1, y1);
-  if (d < pitch * 1.1) {
+  if (!curveConnectors || d < pitch * 1.1) {
     ctx.lineTo(x2, y2);
   } else {
+    // curve connectors between far lines
     ctx.bezierCurveTo(
       x1 + ux + px,
       y1 + uy + py,

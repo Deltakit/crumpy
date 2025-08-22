@@ -1,4 +1,4 @@
-import { OFFSET_Y, rad } from "./config.js";
+import { indentCircuitLines, OFFSET_Y, rad } from "./config.js";
 import { stroke_connector_to } from "../gates/gate_draw_util.js";
 import { marker_placement } from "../gates/gateset_markers.js";
 
@@ -142,7 +142,9 @@ function drawTimeline(
       cur_run = 0;
       cur_y += TIMELINE_PITCH * 0.25;
     } else {
-      cur_x += rad * 0.25; // slight x offset between circuit lines
+      if (indentCircuitLines) {
+        cur_x += rad * 0.25; // slight x offset between qubits in a row
+      }
       cur_run++;
     }
     base_y2xy.set(`${x},${y}`, [
