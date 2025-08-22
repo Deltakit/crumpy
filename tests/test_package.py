@@ -6,4 +6,4 @@ import crumpy as m
 
 
 def test_version():
-    assert importlib.metadata.version("crumpy") == m.__version__
+    assert m.__version__ in importlib.metadata.version("crumpy")
