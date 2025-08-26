@@ -10,10 +10,7 @@ function initCanvas(el) {
   let canvas = document.createElement("canvas");
 
   canvas.id = "cvn";
-  canvas.setAttribute(
-    "style",
-    `border: 1px solid black; margin: 0; padding: 0;`,
-  );
+  canvas.setAttribute("style", `margin: 0; padding: 0;`);
   canvas.tabIndex = 0;
   canvas.width = CANVAS_W;
   canvas.height = CANVAS_H;

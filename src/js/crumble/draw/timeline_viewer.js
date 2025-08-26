@@ -3,6 +3,8 @@ import { stroke_connector_to } from "../gates/gate_draw_util.js";
 import { marker_placement } from "../gates/gateset_markers.js";
 
 let TIMELINE_PITCH = 32;
+let PADDING_VERTICAL = rad;
+let MAX_CANVAS_WIDTH = 4096;
 
 /**
  * @param {!CanvasRenderingContext2D} ctx
@@ -114,7 +116,7 @@ function drawTimeline(
   timesliceQubitCoordsFunc,
   numLayers,
 ) {
-  let w = Math.floor(ctx.canvas.width);
+  let w = MAX_CANVAS_WIDTH;
 
   let qubits = snap.timelineQubits();
   qubits.sort((a, b) => {
@@ -129,18 +131,20 @@ function drawTimeline(
   let base_y2xy = new Map();
   let prev_y = undefined;
   let cur_x = 0;
-  let cur_y = 0;
+  let cur_y = PADDING_VERTICAL + rad;
   let max_run = 0;
   let cur_run = 0;
   for (let q of qubits) {
     let [x, y] = timesliceQubitCoordsFunc(q);
-    cur_y += TIMELINE_PITCH;
     if (prev_y !== y) {
-      prev_y = y;
       cur_x = w / 2;
       max_run = Math.max(max_run, cur_run);
       cur_run = 0;
-      cur_y += TIMELINE_PITCH * 0.25;
+      if (prev_y !== undefined) {
+        // first qubit's y is at initial cur_y value
+        cur_y += TIMELINE_PITCH * 0.25;
+      }
+      prev_y = y;
     } else {
       if (indentCircuitLines) {
         cur_x += rad * 0.25; // slight x offset between qubits in a row
@@ -148,9 +152,10 @@ function drawTimeline(
       cur_run++;
     }
     base_y2xy.set(`${x},${y}`, [
-      Math.round(cur_x) + 20.5,
+      Math.round(cur_x) + 0.5,
       Math.round(cur_y) + 0.5,
     ]);
+    cur_y += TIMELINE_PITCH;
   }
 
   let x_pitch = TIMELINE_PITCH + Math.ceil(rad * max_run * 0.25);
@@ -180,8 +185,38 @@ function drawTimeline(
   };
 
   ctx.save();
+
+  // Using coords function, see if any qubit labels would get cut off
+  let maxLabelWidth = 0;
+  let topLeftX = qubitTimeCoords(qubits[0], min_t_clamp - 1)[0];
+  for (let q of qubits) {
+    let [x, y] = qubitTimeCoords(q, min_t_clamp - 1);
+    let qx = snap.circuit.qubitCoordData[q * 2];
+    let qy = snap.circuit.qubitCoordData[q * 2 + 1];
+    let label = `${qx},${qy}:`;
+    let labelWidth = ctx.measureText(label).width;
+    let labelWidthFromTop = labelWidth - (x - topLeftX);
+    maxLabelWidth = Math.max(maxLabelWidth, labelWidthFromTop);
+  }
+  let textOverflowLen = Math.max(0, maxLabelWidth - topLeftX);
+
+  // Adjust coords function to ensure all qubit labels fit on canvas (+ small pad)
+  let labelShiftedQTC = (q, t) => {
+    let [x, y] = qubitTimeCoords(q, t);
+    return [x + Math.ceil(textOverflowLen) + 3, y];
+  };
+
+  // Resize canvas to fit circuit
+  let timelineHeight =
+    labelShiftedQTC(qubits.at(-1), max_t + 1)[1] + rad + PADDING_VERTICAL; // y of lowest qubit line + padding
+  let timelineWidth = Math.max(
+    ...qubits.map((q) => labelShiftedQTC(q, max_t + 1)[0]),
+  ); // max x of any qubit line's endpoint
+  ctx.canvas.width = Math.floor(timelineWidth);
+  ctx.canvas.height = Math.floor(timelineHeight);
+
   try {
-    ctx.clearRect(0, 0, w, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Draw colored indicators showing Pauli propagation.
     let hitCounts = new Map();
@@ -189,7 +224,7 @@ function drawTimeline(
       drawTimelineMarkers(
         ctx,
         snap,
-        qubitTimeCoords,
+        labelShiftedQTC,
         p,
         mi,
         min_t_clamp,
@@ -203,8 +238,8 @@ function drawTimeline(
     ctx.strokeStyle = "black";
     ctx.fillStyle = "black";
     for (let q of qubits) {
-      let [x0, y0] = qubitTimeCoords(q, min_t_clamp - 1);
-      let [x1, y1] = qubitTimeCoords(q, max_t + 1);
+      let [x0, y0] = labelShiftedQTC(q, min_t_clamp - 1);
+      let [x1, y1] = labelShiftedQTC(q, max_t + 1);
       ctx.beginPath();
       ctx.moveTo(x0, y0);
       ctx.lineTo(x1, y1);
@@ -215,15 +250,16 @@ function drawTimeline(
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     for (let q of qubits) {
-      let [x, y] = qubitTimeCoords(q, min_t_clamp - 1);
+      let [x, y] = labelShiftedQTC(q, min_t_clamp - 1);
       let qx = snap.circuit.qubitCoordData[q * 2];
       let qy = snap.circuit.qubitCoordData[q * 2 + 1];
-      ctx.fillText(`${qx},${qy}:`, x, y);
+      let label = `${qx},${qy}:`;
+      ctx.fillText(label, x, y);
     }
 
     // Draw layers of gates.
     for (let time = min_t_clamp; time <= max_t; time++) {
-      let qubitsCoordsFuncForLayer = (q) => qubitTimeCoords(q, time);
+      let qubitsCoordsFuncForLayer = (q) => labelShiftedQTC(q, time);
       let layer = snap.circuit.layers[time];
       if (layer === undefined) {
         continue;
