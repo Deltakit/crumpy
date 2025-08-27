@@ -262,7 +262,6 @@ function draw(ctx, snap) {
     propagatedMarkerLayers.set(~mi ^ (1 << 30), batch_output[batch_index++]);
   }
 
-  //ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   drawTimeline(
     ctx,
     snap,

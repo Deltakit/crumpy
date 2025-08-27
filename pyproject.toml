@@ -44,6 +44,7 @@ Changelog = "https://github.com/Deltakit/crumpy/releases"
 test = [
   "pytest >=6",
   "pytest-cov >=3",
+  "ipywidgets>=8.1.7",
 ]
 dev = [
   { include-group = "test" },

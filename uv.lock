@@ -301,6 +301,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "ipywidgets" },
     { name = "pytest" },
     { name = "pytest-cov" },
 ]
@@ -329,6 +330,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "ipywidgets", specifier = ">=8.1.7" },
     { name = "pytest", specifier = ">=6" },
     { name = "pytest-cov", specifier = ">=3" },
 ]
