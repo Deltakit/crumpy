@@ -60,7 +60,6 @@ docs = [
 packages = [{ include = "crumpy", from = "src" }]
 include = [
   { path = "src/crumpy/bundle.js", format = ["sdist", "wheel"] },
-  { path = "NOTICE", format = ["sdist", "wheel"] }
 ]
 version = "0.0.0"
 
