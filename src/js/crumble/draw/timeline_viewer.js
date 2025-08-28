@@ -216,7 +216,8 @@ function drawTimeline(
   ctx.canvas.height = Math.floor(timelineHeight);
 
   try {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // Draw colored indicators showing Pauli propagation.
     let hitCounts = new Map();
