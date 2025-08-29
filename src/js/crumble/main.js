@@ -7,14 +7,18 @@ const CANVAS_W = 600;
 const CANVAS_H = 300;
 
 function initCanvas(el) {
-  let canvas = document.createElement("canvas");
+  let scrollWrap = document.createElement("div");
+  scrollWrap.setAttribute("style", "overflow-x: auto; overflow-y: hidden;");
 
+  let canvas = document.createElement("canvas");
   canvas.id = "cvn";
   canvas.setAttribute("style", `margin: 0; padding: 0;`);
   canvas.tabIndex = 0;
   canvas.width = CANVAS_W;
   canvas.height = CANVAS_H;
-  el.appendChild(canvas);
+
+  scrollWrap.appendChild(canvas);
+  el.appendChild(scrollWrap);
 
   return canvas;
 }
