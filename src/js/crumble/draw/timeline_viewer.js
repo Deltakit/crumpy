@@ -136,7 +136,10 @@ function drawTimeline(
   timesliceQubitCoordsFunc,
   numLayers,
 ) {
-  let w = MAX_CANVAS_WIDTH;
+  let wrap = ctx.canvas.parentElement;
+  ctx.canvas.width = wrap.clientWidth;
+  ctx.canvas.height = wrap.clientHeight;
+  let w = ctx.canvas.width;
 
   let qubits = snap.timelineQubits();
   qubits.sort((a, b) => {
@@ -232,8 +235,7 @@ function drawTimeline(
   let timelineWidth = Math.max(
     ...qubits.map((q) => labelShiftedQTC(q, max_t + 1)[0]),
   ); // max x of any qubit line's endpoint
-  ctx.canvas.width = Math.floor(timelineWidth);
-  ctx.canvas.height = Math.floor(timelineHeight);
+  ctx.canvas.height = Math.round(timelineHeight);
 
   try {
     ctx.fillStyle = "white";

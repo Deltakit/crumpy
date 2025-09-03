@@ -32,14 +32,13 @@ const CANVAS_H = 300;
 
 function initCanvas(el) {
   let scrollWrap = document.createElement("div");
+  scrollWrap.id = "scroll-wrap";
   scrollWrap.setAttribute("style", "overflow-x: auto; overflow-y: hidden;");
 
   let canvas = document.createElement("canvas");
   canvas.id = "cvn";
-  canvas.setAttribute("style", `margin: 0; padding: 0;`);
+  canvas.setAttribute("style", `margin: 0; padding: 0; width: 100%;`);
   canvas.tabIndex = 0;
-  canvas.width = CANVAS_W;
-  canvas.height = CANVAS_H;
 
   scrollWrap.appendChild(canvas);
   el.appendChild(scrollWrap);
@@ -53,6 +52,11 @@ function render({ model, el }) {
     getIndentCircuitLines: () => model.get("indentCircuitLines"),
     getCurveConnectors: () => model.get("curveConnectors"),
     getShowAnnotationRegions: () => model.get("showAnnotationRegions"),
+    getScrollIndex: () => model.get("scrollIndex"),
+    setNumLayers: (numLayers) => {
+      model.set("numLayers", numLayers);
+      model.save_changes();
+    },
   };
 
   const canvas = initCanvas(el);
@@ -69,6 +73,9 @@ function render({ model, el }) {
   function commitStimCircuit(stim_str) {
     let circuit = Circuit.fromStimCircuit(stim_str);
     editorState.commit(circuit);
+
+    let newNumLayers = editorState.copyOfCurCircuit().layers.length;
+    traitlets.setNumLayers(newNumLayers);
   }
 
   // Changes to circuit on the Python/notebook side update the JS
@@ -85,6 +92,11 @@ function render({ model, el }) {
     setShowAnnotationRegions(traitlets.getShowAnnotationRegions());
     editorState.force_redraw();
   });
+  model.on("change:scrollIndex", () => {
+    editorState.changeCurLayerTo(traitlets.getScrollIndex());
+  });
+
+  window.addEventListener("resize", () => editorState.force_redraw());
 
   // Listeners on editor state that trigger redraws
   editorState.rev.changes().subscribe(() => {
@@ -101,5 +113,6 @@ function render({ model, el }) {
   setCurveConnectors(traitlets.getCurveConnectors());
   setShowAnnotationRegions(traitlets.getShowAnnotationRegions());
   commitStimCircuit(traitlets.getStim());
+  editorState.changeCurLayerTo(traitlets.getScrollIndex());
 }
 export default { render };

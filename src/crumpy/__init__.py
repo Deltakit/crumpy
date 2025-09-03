@@ -44,6 +44,10 @@ class CircuitWidget(anywidget.AnyWidget):
     showAnnotationRegions : bool
       If detector region and observable marks are shown.
       Defaults to True (matching Crumble).
+    scrollIndex : int
+      The current slider value. Defaults to 0.
+    numLayers : int
+      The number of layers of gates in the current circuit. Defaults to 0.
     """
 
     _esm = bundler_output_dir / "bundle.js"
@@ -53,6 +57,8 @@ class CircuitWidget(anywidget.AnyWidget):
     indentCircuitLines = traitlets.Bool(True).tag(sync=True)
     curveConnectors = traitlets.Bool(True).tag(sync=True)
     showAnnotationRegions = traitlets.Bool(True).tag(sync=True)
+    scrollIndex = traitlets.Int(0).tag(sync=True)
+    numLayers = traitlets.Int(0).tag(sync=True)
 
     @staticmethod
     def from_cirq(cirq_circuit: cirq.Circuit):
