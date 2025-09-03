@@ -269,6 +269,35 @@ function drawTimeline(
       ctx.stroke();
     }
 
+    // Draw highlight of current layer.
+    ctx.globalAlpha *= 0.5;
+    ctx.fillStyle = "black";
+    {
+      let highlight_width = x_pitch;
+      let region = new Path2D();
+      let x_top = labelShiftedQTC(0, snap.curLayer)[0];
+      let x_bottom = labelShiftedQTC(qubits.at(-1), snap.curLayer)[0];
+      region.moveTo(x_top - highlight_width / 2, 0);
+      for (let q of qubits) {
+        let [x, y] = labelShiftedQTC(q, snap.curLayer);
+        region.lineTo(x - highlight_width / 2, y);
+      }
+
+      region.lineTo(x_bottom - highlight_width / 2, ctx.canvas.height);
+      region.lineTo(x_bottom + highlight_width / 2, ctx.canvas.height);
+
+      for (let q of [...qubits].reverse()) {
+        let [x, y] = labelShiftedQTC(q, snap.curLayer);
+        region.lineTo(x + highlight_width / 2, y);
+      }
+
+      region.lineTo(x_top + highlight_width / 2, 0);
+      region.closePath();
+
+      ctx.fill(region);
+    }
+    ctx.globalAlpha *= 2;
+
     // Draw wire labels.
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
