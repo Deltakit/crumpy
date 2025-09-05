@@ -68,6 +68,7 @@ jobs:
 
       - name: Copy bundle.js file
         run: |
+          ls -al dist/
           cp dist/crumpy-*/src/crumpy/bundle.js src/crumpy/
 
       - name: Build documentation
