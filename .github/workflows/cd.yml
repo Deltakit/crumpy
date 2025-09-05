@@ -56,7 +56,9 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deploy-pages.outputs.page_url }}
-    if: (github.event_name == 'release' && github.event.action == 'published') || github.ref == 'refs/heads/main'
+    if:
+      (github.event_name == 'release' && github.event.action == 'published') ||
+      github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
