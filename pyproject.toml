@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A python library for visualizing Crumble circuits in Jupyter"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 1 - Planning",
   "Intended Audience :: Science/Research",
@@ -19,8 +19,6 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -55,6 +53,12 @@ docs = [
   "sphinx_copybutton",
   "sphinx_autodoc_typehints",
   "furo>=2023.08.17",
+  "nbsphinx>=0.9.6",
+  "ipykernel>=6.30.1",
+  "stim>=1.15.0",
+  "pandoc>=2.4",
+  "cirq>=1.6.1",
+  "stimcirq>=1.15.0",
 ]
 [tool.poetry]
 packages = [{ include = "crumpy", from = "src" }]
@@ -97,7 +101,7 @@ report.exclude_also = [
 
 [tool.mypy]
 files = ["src", "tests"]
-python_version = "3.9"
+python_version = "3.11"
 warn_unused_configs = true
 strict = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
@@ -113,6 +117,7 @@ disallow_incomplete_defs = true
 
 [tool.ruff]
 target-version = "py39"
+exclude = ["*.ipynb"]
 
 [tool.ruff.lint]
 extend-select = [
@@ -152,7 +157,7 @@ isort.required-imports = ["from __future__ import annotations"]
 
 
 [tool.pylint]
-py-version = "3.9"
+py-version = "3.11"
 ignore-paths = [".*/_version.py"]
 reports.output-format = "colorized"
 similarities.ignore-imports = "yes"

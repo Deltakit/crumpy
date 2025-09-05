@@ -16,6 +16,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
+    "nbsphinx",
 ]
 
 source_suffix = [".rst", ".md"]
@@ -29,6 +30,9 @@ exclude_patterns = [
 ]
 
 html_theme = "furo"
+
+# Static files configuration
+html_static_path = ["../_static"]
 
 html_theme_options: dict[str, Any] = {
     "footer_icons": [
@@ -62,3 +66,14 @@ nitpick_ignore = [
 ]
 
 always_document_param_types = True
+
+# Notebooks
+
+nbsphinx_execute = "auto"
+
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'png2x'}",
+    "--InlineBackend.rc=figure.dpi=96",
+]
+
+nbsphinx_allow_errors = True
