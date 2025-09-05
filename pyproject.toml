@@ -73,7 +73,7 @@ version = "0.1.0"
 poetry-dynamic-versioning = { version = ">=1.0.0", extras = ["plugin"] }
 
 [tool.poetry-dynamic-versioning]
-enable = true
+enable = false
 substitution.files = ["src/crumpy/__init__.py"]
 
 [tool.poetry.group.test.dependencies]
