@@ -50,7 +50,7 @@ class CircuitWidget(anywidget.AnyWidget):
     curveConnectors = traitlets.Bool(True).tag(sync=True)
 
     @staticmethod
-    def fromCirq(cirq_circuit: cirq.Circuit):
+    def from_cirq(cirq_circuit: cirq.Circuit):
         """Create a `CircuitWidget` from a `cirq.Circuit`.
 
         `cirq_circuit` will be transpiled to a `stim.Circuit` before use with `CircuitWidget`.
@@ -74,7 +74,7 @@ class CircuitWidget(anywidget.AnyWidget):
             raise TypeError(msg) from ex
 
     @staticmethod
-    def fromQiskit(qiskit_circuit: qiskit.QuantumCircuit):
+    def from_qiskit(qiskit_circuit: qiskit.QuantumCircuit):
         """Create a `CircuitWidget` from a `qiskit.QuantumCircuit`.
 
         `qiskit_circuit` will be transpiled to a `stim.Circuit` before use with `CircuitWidget`.
@@ -93,13 +93,13 @@ class CircuitWidget(anywidget.AnyWidget):
         try:
             qasm_circuit = qiskit.qasm3.dumps(qiskit_circuit)
             cirq_circuit = circuit_from_qasm(qasm_circuit)
-            return CircuitWidget.fromCirq(cirq_circuit)
+            return CircuitWidget.from_cirq(cirq_circuit)
         except TypeError as ex:
             msg = "Unable to translate qiskit circuit to stim."
             raise TypeError(msg) from ex
 
     @staticmethod
-    def fromStim(stim_circuit: stim.Circuit):
+    def from_stim(stim_circuit: stim.Circuit):
         """Create a `CircuitWidget` from a `stim.Circuit`.
 
         Parameters

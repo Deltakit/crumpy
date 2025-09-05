@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import cirq
 import ipywidgets
 import pytest
+import qiskit
+import stim
 import traitlets
 
 from crumpy import CircuitWidget
@@ -58,3 +61,65 @@ def test_use_case_dlink():
     new_stim = "Y 0;"
     circuit.stim = new_stim
     assert circuit.stim == new_stim
+
+
+def test_from_cirq_valid():
+    """CircuitWidget.from_cirq should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) cirq circuit."""
+
+    q0 = cirq.LineQubit(0)
+    q1 = cirq.LineQubit(1)
+    cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1))
+
+    widg = CircuitWidget.from_cirq(cirq_circuit)
+
+    assert "H 0" in widg.stim
+    assert "CNOT 0 1" in widg.stim or "CX 0 1" in widg.stim
+
+
+def test_from_cirq_invalid():
+    """CircuitWidget.from_cirq should raise an error when given an invalid (non-stim-transpilable) cirq circuit."""
+
+    q0 = cirq.LineQubit(0)
+    q1 = cirq.LineQubit(1)
+    cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1), cirq.rx(2).on(q0))
+    with pytest.raises(TypeError):
+        CircuitWidget.from_cirq(cirq_circuit)
+
+
+def test_from_qiskit_valid():
+    """CircuitWidget.from_qiskit should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) qiskit circuit."""
+
+    qc = qiskit.QuantumCircuit(2)
+    qc.z(0)
+    qc.cx(1, 0)
+
+    widg = CircuitWidget.from_qiskit(qc)
+
+    assert "Z 0" in widg.stim
+    assert "CNOT 1 0" in widg.stim or "CX 1 0" in widg.stim
+
+
+def test_from_qiskit_invalid():
+    """CircuitWidget.from_qiskit should raise an error when given an invalid (non-stim-transpilable) qiskit circuit."""
+
+    qc = qiskit.QuantumCircuit(2)
+    qc.z(0)
+    qc.cx(1, 0)
+    qc.ry(1.234, 0)
+
+    with pytest.raises(TypeError):
+        CircuitWidget.from_qiskit(qc)
+
+
+def test_from_stim():
+    """CircuitWidget.from_stim should create a CircuitWidget with the given stim circuit."""
+
+    stim_circuit = stim.Circuit("""
+    X 1
+    CY 0 1
+    """)
+
+    widg = CircuitWidget.from_stim(stim_circuit)
+
+    assert "X 1" in widg.stim
+    assert "CY 0 1" in widg.stim  # also covers alternate name ZCY
