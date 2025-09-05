@@ -55,12 +55,12 @@ docs = [
   "sphinx_copybutton",
   "sphinx_autodoc_typehints",
   "furo>=2023.08.17",
-  "nbsphinx",
-  "ipykernel",
-  "stim",
-  "pandoc",
-  "cirq",
-  "stimcirq",
+  "nbsphinx>=0.9.6",
+  "ipykernel>=6.30.1",
+  "stim>=1.15.0",
+  "pandoc>=2.4",
+  "cirq>=1.6.1",
+  "stimcirq>=1.15.0",
 ]
 [tool.poetry]
 packages = [{ include = "crumpy", from = "src" }]
