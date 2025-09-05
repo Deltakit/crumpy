@@ -19,7 +19,7 @@ sub-project of the open-source stabilizer circuit project
 
 ## Installation
 
-**Requires:** Python 3.9+
+**Requires:** Python 3.11+
 
 ```console
 pip install crumpy
