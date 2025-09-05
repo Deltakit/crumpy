@@ -6,4 +6,5 @@ notebooks/getting_started
 ```
 
 ```{include} ../README.md
+
 ```

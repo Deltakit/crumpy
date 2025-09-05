@@ -56,11 +56,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Set up UV
         uses: astral-sh/setup-uv@v6
-      
+
       - name: Install Pandoc
         run: |
           sudo apt-get update
@@ -68,7 +68,7 @@ jobs:
 
       - name: Copy bundle.js file
         run: |
-          cp dist/cumpy-*/src/crumpy/bundle.js src/crumpy/
+          cp dist/crumpy-*/src/crumpy/bundle.js src/crumpy/
 
       - name: Build documentation
         run: |
