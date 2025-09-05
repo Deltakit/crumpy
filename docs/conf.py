@@ -30,6 +30,9 @@ exclude_patterns = [
 
 html_theme = "furo"
 
+# Static files configuration
+html_static_path = ['../_static']
+
 html_theme_options: dict[str, Any] = {
     "footer_icons": [
         {

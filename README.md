@@ -4,15 +4,7 @@
 
 Visualize quantum circuits with error propagation in a Jupyter widget.
 
-[![Actions Status][actions-badge]][actions-link]
-[![Documentation Status][rtd-badge]][rtd-link]
-[![GitHub Discussion][github-discussions-badge]][github-discussions-link]
-
-[![PyPI version][pypi-version]][pypi-link]
-[![Conda-Forge][conda-badge]][conda-link]
-[![PyPI platforms][pypi-platforms]][pypi-link]
-
-<img src="./images/bit_flip_in_jupyter.png" alt="jupyter notebook cell with quantum circuit diagram output" width=400>
+<img src="./_static/images/bit_flip_in_jupyter.png" alt="jupyter notebook cell with quantum circuit diagram output" width=400>
 
 ---
 
@@ -61,7 +53,7 @@ circuit = CircuitWidget(stim=your_circuit)
 circuit
 ```
 
-<img src="./images/circuit_epr_pair.png" alt="quantum circuit that creates EPR pair" width=175>
+<img src="./_static/images/circuit_epr_pair.png" alt="quantum circuit that creates EPR pair" width=175>
 
 ### Propagating Paulis
 
@@ -84,7 +76,7 @@ z_error_on_qubit_2 = "#!pragma MARKZ(0) 2"
 
 #### Legend
 
-<img src="./images/pauli_legend.svg" alt="jupyter notebook cell with quantum circuit diagram output" width=200>
+<img src="./_static/images/pauli_legend.svg" alt="jupyter notebook cell with quantum circuit diagram output" width=200>
 
 #### Example
 
@@ -100,7 +92,7 @@ H 0
 CircuitWidget(stim=circuit_with_error)
 ```
 
-<img src="./images/circuit_with_marker.png" alt="quantum circuit with Pauli propagation markers" width=200>
+<img src="./_static/images/circuit_with_marker.png" alt="quantum circuit with Pauli propagation markers" width=200>
 
 Notice how the single specified Pauli X marker propagates both through the
 control and across the connector of the CNOT, and gets transformed into a Pauli
