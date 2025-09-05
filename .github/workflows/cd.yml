@@ -66,6 +66,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc
 
+      - name: Copy bundle.js file
+        run: |
+          cp dist/cumpy-*/src/crumpy/bundle.js src/crumpy/
+
       - name: Build documentation
         run: |
           uvx nox -s docs

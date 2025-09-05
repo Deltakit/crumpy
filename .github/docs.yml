@@ -3,7 +3,6 @@ name: Build docs
 
 on:
   workflow_dispatch:
-  pull_request:
 
 jobs:
   build-docs:
@@ -31,6 +30,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
+
+      - name: Copy bundle.js file
+        run: |
+          cp dist/cumpy-*/src/crumpy/bundle.js src/crumpy/
 
       - name: Build documentation
         run: |
