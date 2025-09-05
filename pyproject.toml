@@ -67,7 +67,7 @@ packages = [{ include = "crumpy", from = "src" }]
 include = [
   { path = "src/crumpy/bundle.js", format = ["sdist", "wheel"] },
 ]
-version = "0.0.0"
+version = "0.1.0"
 
 [tool.poetry.requires-plugins]
 poetry-dynamic-versioning = { version = ">=1.0.0", extras = ["plugin"] }
