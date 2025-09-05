@@ -41,6 +41,7 @@ jobs:
       - uses: hynek/build-and-inspect-python-package@v2
 
   build-docs:
+    needs: [dist]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -65,6 +66,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: Packages
+          path: dist
 
       - name: Copy bundle.js file
         run: |
