@@ -37,6 +37,12 @@ jobs:
           cd ./src/js
           npm ci
           npm run build
+      # Upload the built JavaScript files as an artifact
+      - name: Upload JavaScript build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: bundle.js
+          path: ./src/crumpy/bundle.js
 
       - uses: hynek/build-and-inspect-python-package@v2
 
@@ -67,15 +73,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc
 
-      - uses: actions/download-artifact@v5
+      - name: Download JavaScript build artifacts
+        uses: actions/download-artifact@v5
         with:
-          name: Packages
-          path: dist
-
-      - name: Copy bundle.js file
-        run: |
-          ls -al dist/
-          cp dist/crumpy-*/src/crumpy/bundle.js src/crumpy/
+          name: bundle.js
+          path: src/crumpy
 
       - name: Build documentation
         run: |
