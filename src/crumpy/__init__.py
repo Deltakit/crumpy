@@ -12,7 +12,13 @@ from __future__ import annotations
 import pathlib
 
 import anywidget
+import cirq
+import qiskit
+import qiskit.qasm3
+import stim
+import stimcirq
 import traitlets
+from cirq.contrib.qasm_import import circuit_from_qasm
 
 __version__ = "0.0.0"
 
@@ -42,3 +48,63 @@ class CircuitWidget(anywidget.AnyWidget):
     )
     indentCircuitLines = traitlets.Bool(True).tag(sync=True)
     curveConnectors = traitlets.Bool(True).tag(sync=True)
+
+    @staticmethod
+    def fromCirq(cirq_circuit: cirq.Circuit):
+        """Create a `CircuitWidget` from a `cirq.Circuit`.
+
+        `cirq_circuit` will be transpiled to a `stim.Circuit` before use with `CircuitWidget`.
+        `cirq_circuit` must be transpilable to a `stim.Circuit`.
+
+        Parameters
+        ----------
+        cirq_circuit : cirq.Circuit
+            cirq circuit to visualize
+
+        Raises
+        ------
+        TypeError
+            If `cirq_circuit` is unable to be converted to a `stim.Circuit`
+        """
+        try:
+            stim_circuit = stimcirq.cirq_circuit_to_stim_circuit(cirq_circuit)
+            return CircuitWidget(stim=str(stim_circuit))
+        except TypeError as ex:
+            msg = "Unable to translate cirq circuit to stim."
+            raise TypeError(msg) from ex
+
+    @staticmethod
+    def fromQiskit(qiskit_circuit: qiskit.QuantumCircuit):
+        """Create a `CircuitWidget` from a `qiskit.QuantumCircuit`.
+
+        `qiskit_circuit` will be transpiled to a `stim.Circuit` before use with `CircuitWidget`.
+        `qiskit_circuit` must be transpilable to a `stim.Circuit`.
+
+        Parameters
+        ----------
+        qiskit_circuit : qiskit.QuantumCircuit
+            qiskit circuit to visualize
+
+        Raises
+        ------
+        TypeError
+            If `qiskit_circuit` is unable to be converted to a `stim.Circuit`
+        """
+        try:
+            qasm_circuit = qiskit.qasm3.dumps(qiskit_circuit)
+            cirq_circuit = circuit_from_qasm(qasm_circuit)
+            return CircuitWidget.fromCirq(cirq_circuit)
+        except TypeError as ex:
+            msg = "Unable to translate qiskit circuit to stim."
+            raise TypeError(msg) from ex
+
+    @staticmethod
+    def fromStim(stim_circuit: stim.Circuit):
+        """Create a `CircuitWidget` from a `stim.Circuit`.
+
+        Parameters
+        ----------
+        stim_circuit : stim.Circuit
+            stim circuit to visualize
+        """
+        return CircuitWidget(stim=str(stim_circuit))
