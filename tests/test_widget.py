@@ -63,63 +63,60 @@ def test_use_case_dlink():
     assert circuit.stim == new_stim
 
 
-def test_from_cirq_valid():
-    """CircuitWidget.from_cirq should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) cirq circuit."""
+class Test_CircuitImporting:
+    def test_from_cirq_valid(self):
+        """CircuitWidget.from_cirq should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) cirq circuit."""
 
-    q0 = cirq.LineQubit(0)
-    q1 = cirq.LineQubit(1)
-    cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1))
+        q0 = cirq.LineQubit(0)
+        q1 = cirq.LineQubit(1)
+        cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1))
 
-    widg = CircuitWidget.from_cirq(cirq_circuit)
+        widg = CircuitWidget.from_cirq(cirq_circuit)
 
-    assert "H 0" in widg.stim
-    assert "CNOT 0 1" in widg.stim or "CX 0 1" in widg.stim
+        assert "H 0" in widg.stim
+        assert "CNOT 0 1" in widg.stim or "CX 0 1" in widg.stim
 
+    def test_from_cirq_invalid(self):
+        """CircuitWidget.from_cirq should raise an error when given an invalid (non-stim-transpilable) cirq circuit."""
 
-def test_from_cirq_invalid():
-    """CircuitWidget.from_cirq should raise an error when given an invalid (non-stim-transpilable) cirq circuit."""
+        q0 = cirq.LineQubit(0)
+        q1 = cirq.LineQubit(1)
+        cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1), cirq.rx(2).on(q0))
+        with pytest.raises(TypeError):
+            CircuitWidget.from_cirq(cirq_circuit)
 
-    q0 = cirq.LineQubit(0)
-    q1 = cirq.LineQubit(1)
-    cirq_circuit = cirq.Circuit(cirq.H(q0), cirq.CNOT(q0, q1), cirq.rx(2).on(q0))
-    with pytest.raises(TypeError):
-        CircuitWidget.from_cirq(cirq_circuit)
+    def test_from_qiskit_valid(self):
+        """CircuitWidget.from_qiskit should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) qiskit circuit."""
 
+        qc = qiskit.QuantumCircuit(2)
+        qc.z(0)
+        qc.cx(1, 0)
 
-def test_from_qiskit_valid():
-    """CircuitWidget.from_qiskit should create a CircuitWidget with the correct circuit when given a valid (stim-transpilable) qiskit circuit."""
+        widg = CircuitWidget.from_qiskit(qc)
 
-    qc = qiskit.QuantumCircuit(2)
-    qc.z(0)
-    qc.cx(1, 0)
+        assert "Z 0" in widg.stim
+        assert "CNOT 1 0" in widg.stim or "CX 1 0" in widg.stim
 
-    widg = CircuitWidget.from_qiskit(qc)
+    def test_from_qiskit_invalid(self):
+        """CircuitWidget.from_qiskit should raise an error when given an invalid (non-stim-transpilable) qiskit circuit."""
 
-    assert "Z 0" in widg.stim
-    assert "CNOT 1 0" in widg.stim or "CX 1 0" in widg.stim
+        qc = qiskit.QuantumCircuit(2)
+        qc.z(0)
+        qc.cx(1, 0)
+        qc.ry(1.234, 0)
 
+        with pytest.raises(TypeError):
+            CircuitWidget.from_qiskit(qc)
 
-def test_from_qiskit_invalid():
-    """CircuitWidget.from_qiskit should raise an error when given an invalid (non-stim-transpilable) qiskit circuit."""
+    def test_from_stim(self):
+        """CircuitWidget.from_stim should create a CircuitWidget with the given stim circuit."""
 
-    qc = qiskit.QuantumCircuit(2)
-    qc.z(0)
-    qc.cx(1, 0)
-    qc.ry(1.234, 0)
+        stim_circuit = stim.Circuit("""
+        X 1
+        CY 0 1
+        """)
 
-    with pytest.raises(TypeError):
-        CircuitWidget.from_qiskit(qc)
+        widg = CircuitWidget.from_stim(stim_circuit)
 
-
-def test_from_stim():
-    """CircuitWidget.from_stim should create a CircuitWidget with the given stim circuit."""
-
-    stim_circuit = stim.Circuit("""
-    X 1
-    CY 0 1
-    """)
-
-    widg = CircuitWidget.from_stim(stim_circuit)
-
-    assert "X 1" in widg.stim
-    assert "CY 0 1" in widg.stim  # also covers alternate name ZCY
+        assert "X 1" in widg.stim
+        assert "CY 0 1" in widg.stim  # also covers alternate name ZCY
