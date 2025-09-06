@@ -10,11 +10,12 @@ crumpy: A python library for visualizing Crumble circuits in Jupyter
 from __future__ import annotations
 
 import pathlib
+from importlib.metadata import version
 
 import anywidget
 import traitlets
 
-__version__ = "0.0.0"
+__version__ = version(__name__)
 
 __all__ = ["__version__"]
 
