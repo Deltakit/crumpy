@@ -62,7 +62,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        fetch-tags: true
+        with:
+          fetch-tags: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
