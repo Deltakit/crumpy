@@ -4,7 +4,7 @@
 
 Visualize quantum circuits with error propagation in a Jupyter widget.
 
-<img src="./_static/images/bit_flip_in_jupyter.png" alt="jupyter notebook cell with quantum circuit diagram output" width=400>
+<img src="https://i.imgur.com/LVu7H1l.png" alt="jupyter notebook cell with quantum circuit diagram output" width=400>
 
 ---
 
