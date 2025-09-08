@@ -53,7 +53,7 @@ circuit = CircuitWidget(stim=your_circuit)
 circuit
 ```
 
-<img src="./_static/images/circuit_epr_pair.png" alt="quantum circuit that creates EPR pair" width=175>
+<img src="https://i.imgur.com/AOM0soZ.png" alt="quantum circuit that creates EPR pair" width=175>
 
 ### Propagating Paulis
 
@@ -76,7 +76,7 @@ z_error_on_qubit_2 = "#!pragma MARKZ(0) 2"
 
 #### Legend
 
-<img src="./_static/images/pauli_legend.svg" alt="jupyter notebook cell with quantum circuit diagram output" width=200>
+<img src="https://i.imgur.com/Zt0G5k8.png" alt="red Pauli X, green Pauli Y, blue Pauli Z markers" width=200>
 
 #### Example
 
@@ -92,7 +92,7 @@ H 0
 CircuitWidget(stim=circuit_with_error)
 ```
 
-<img src="./_static/images/circuit_with_marker.png" alt="quantum circuit with Pauli propagation markers" width=200>
+<img src="https://i.imgur.com/5CH1OFQ.png" alt="quantum circuit with Pauli propagation markers" width=200>
 
 Notice how the single specified Pauli X marker propagates both through the
 control and across the connector of the CNOT, and gets transformed into a Pauli
