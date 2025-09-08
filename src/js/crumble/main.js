@@ -97,6 +97,10 @@ function render({ model, el }) {
   });
 
   window.addEventListener("resize", () => editorState.force_redraw());
+  const resizeObserver = new ResizeObserver((_ents) =>
+    editorState.force_redraw(),
+  );
+  resizeObserver.observe(document.getElementById("scroll-wrap"));
 
   // Listeners on editor state that trigger redraws
   editorState.rev.changes().subscribe(() => {
