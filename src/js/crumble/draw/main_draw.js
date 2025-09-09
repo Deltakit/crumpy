@@ -18,7 +18,13 @@
  * - Refactored for CrumPy
  */
 
-import { pitch, rad, OFFSET_X, OFFSET_Y } from "./config.js";
+import {
+  pitch,
+  rad,
+  showAnnotationRegions,
+  OFFSET_X,
+  OFFSET_Y,
+} from "./config.js";
 import { marker_placement } from "../gates/gateset_markers.js";
 import { drawTimeline } from "./timeline_viewer.js";
 import { PropagatedPauliFrames } from "../circuit/propagated_pauli_frames.js";
@@ -275,11 +281,14 @@ function draw(ctx, snap) {
     batch_input,
   );
   let batch_index = 0;
-  for (let mi = 0; mi < dets.length; mi++) {
-    propagatedMarkerLayers.set(~mi, batch_output[batch_index++]);
-  }
-  for (let mi of obs.keys()) {
-    propagatedMarkerLayers.set(~mi ^ (1 << 30), batch_output[batch_index++]);
+
+  if (showAnnotationRegions) {
+    for (let mi = 0; mi < dets.length; mi++) {
+      propagatedMarkerLayers.set(~mi, batch_output[batch_index++]);
+    }
+    for (let mi of obs.keys()) {
+      propagatedMarkerLayers.set(~mi ^ (1 << 30), batch_output[batch_index++]);
+    }
   }
 
   drawTimeline(

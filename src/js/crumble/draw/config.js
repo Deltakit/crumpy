@@ -24,6 +24,7 @@ const OFFSET_X = -pitch + Math.floor(pitch / 4) + 0.5;
 const OFFSET_Y = -pitch + Math.floor(pitch / 4) + 0.5;
 let indentCircuitLines = true;
 let curveConnectors = true;
+let showAnnotationRegions = true;
 
 const setIndentCircuitLines = (newBool) => {
   if (typeof newBool !== "boolean") {
@@ -39,6 +40,13 @@ const setCurveConnectors = (newBool) => {
   curveConnectors = newBool;
 };
 
+const setShowAnnotationRegions = (newBool) => {
+  if (typeof newBool !== "boolean") {
+    throw new TypeError(`Expected a boolean, but got ${typeof newBool}`);
+  }
+  showAnnotationRegions = newBool;
+};
+
 export {
   pitch,
   rad,
@@ -46,6 +54,8 @@ export {
   OFFSET_Y,
   indentCircuitLines,
   curveConnectors,
+  showAnnotationRegions,
   setIndentCircuitLines,
   setCurveConnectors,
+  setShowAnnotationRegions,
 };

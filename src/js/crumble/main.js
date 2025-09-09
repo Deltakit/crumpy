@@ -21,7 +21,11 @@
 import { Circuit } from "./circuit/circuit.js";
 import { draw } from "./draw/main_draw.js";
 import { EditorState } from "./editor/editor_state.js";
-import { setIndentCircuitLines, setCurveConnectors } from "./draw/config.js";
+import {
+  setIndentCircuitLines,
+  setCurveConnectors,
+  setShowAnnotationRegions,
+} from "./draw/config.js";
 
 const CANVAS_W = 600;
 const CANVAS_H = 300;
@@ -48,6 +52,7 @@ function render({ model, el }) {
     getStim: () => model.get("stim"),
     getIndentCircuitLines: () => model.get("indentCircuitLines"),
     getCurveConnectors: () => model.get("curveConnectors"),
+    getShowAnnotationRegions: () => model.get("showAnnotationRegions"),
   };
 
   const canvas = initCanvas(el);
@@ -76,6 +81,10 @@ function render({ model, el }) {
     setCurveConnectors(traitlets.getCurveConnectors());
     editorState.force_redraw();
   });
+  model.on("change:showAnnotationRegions", () => {
+    setShowAnnotationRegions(traitlets.getShowAnnotationRegions());
+    editorState.force_redraw();
+  });
 
   // Listeners on editor state that trigger redraws
   editorState.rev.changes().subscribe(() => {
@@ -90,6 +99,7 @@ function render({ model, el }) {
   // Configure initial settings and stim
   setIndentCircuitLines(traitlets.getIndentCircuitLines());
   setCurveConnectors(traitlets.getCurveConnectors());
+  setShowAnnotationRegions(traitlets.getShowAnnotationRegions());
   commitStimCircuit(traitlets.getStim());
 }
 export default { render };

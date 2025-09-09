@@ -35,9 +35,11 @@ def test_has_traits():
     assert widg.has_trait("stim")
     assert widg.has_trait("indentCircuitLines")
     assert widg.has_trait("curveConnectors")
+    assert widg.has_trait("showAnnotationRegions")
     assert widg.trait_metadata("stim", "sync")
     assert widg.trait_metadata("indentCircuitLines", "sync")
     assert widg.trait_metadata("curveConnectors", "sync")
+    assert widg.trait_metadata("showAnnotationRegions", "sync")
 
 
 def test_use_case_dlink():

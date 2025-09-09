@@ -41,6 +41,9 @@ class CircuitWidget(anywidget.AnyWidget):
     curveConnectors : bool
       If connectors (e.g., the line between control and target of a CNOT) can be drawn curved.
       Defaults to True (matching Crumble).
+    showAnnotationRegions : bool
+      If detector region and observable marks are shown.
+      Defaults to True (matching Crumble).
     """
 
     _esm = bundler_output_dir / "bundle.js"
@@ -49,6 +52,7 @@ class CircuitWidget(anywidget.AnyWidget):
     )
     indentCircuitLines = traitlets.Bool(True).tag(sync=True)
     curveConnectors = traitlets.Bool(True).tag(sync=True)
+    showAnnotationRegions = traitlets.Bool(True).tag(sync=True)
 
     @staticmethod
     def from_cirq(cirq_circuit: cirq.Circuit):
