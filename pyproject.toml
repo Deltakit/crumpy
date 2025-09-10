@@ -29,6 +29,7 @@ dynamic = ["version"]
 dependencies = [
     "anywidget>=0.9.18",
     "cirq>=1.3.0",
+    "ipywidgets>=8.1.7",
     "ply>=3.11",
     "qiskit>=2.1.2",
     "stim>=1.15.0",
@@ -47,7 +48,6 @@ Changelog = "https://github.com/Deltakit/crumpy/releases"
 test = [
   "pytest >=6",
   "pytest-cov >=3",
-  "ipywidgets>=8.1.7",
 ]
 dev = [
   { include-group = "test" },
