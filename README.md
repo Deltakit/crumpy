@@ -177,3 +177,8 @@ for the changes to take effect.
 [rtd-link]:                 https://crumpy.readthedocs.io/en/latest/?badge=latest
 
 <!-- prettier-ignore-end -->
+
+## Attribution
+
+This package was created as part of [Sam Zappa's](https://github.com/zzzappy)'s internship at [Riverlane](https://github.com/riverlane) during the Summer of 2025.
+Thanks to [Hyeok Kim](https://github.com/see-mike-out), [Leilani Battle](https://github.com/leibatt) and [Abe Asfaw](https://github.com/aasfaw) for guidance and useful discussions.
