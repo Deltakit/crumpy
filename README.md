@@ -180,8 +180,8 @@ for the changes to take effect.
 
 ## Attribution
 
-This package was created as part of [Sam Zappa's](https://github.com/zzzappy)'s
+This package was created as part of [Sam Zappa](https://github.com/zzzappy)'s
 internship at [Riverlane](https://github.com/riverlane) during the Summer
 of 2025. Thanks to [Hyeok Kim](https://github.com/see-mike-out),
-[Leilani Battle](https://github.com/leibatt) and
+[Leilani Battle](https://github.com/leibatt), and
 [Abe Asfaw](https://github.com/aasfaw) for guidance and useful discussions.
