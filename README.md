@@ -1,5 +1,4 @@
-> [!NOTE]
-> This repository is archived and no longer maintained.
+> [!NOTE] This repository is archived and no longer maintained.
 >
 > This repository remains available for historical and archival purposes.
 
