@@ -1,5 +1,10 @@
 <div align="center">
 
+[!NOTE]
+This repository is archived and no longer maintained.
+
+This repository remains available for historical and archival purposes.
+
 # CrumPy
 
 Visualize quantum circuits with error propagation in a Jupyter widget.
