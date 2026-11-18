@@ -1,9 +1,9 @@
 <div align="center">
 
-[!NOTE]
-This repository is archived and no longer maintained.
-
-This repository remains available for historical and archival purposes.
+> [!NOTE]
+> This repository is archived and no longer maintained.
+>
+> This repository remains available for historical and archival purposes.
 
 # CrumPy
 
